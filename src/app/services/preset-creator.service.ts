@@ -1,12 +1,24 @@
 import { Injectable, inject } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
-import { Oscillator } from './synth.service';
+import { Channel, Waveform } from './synth.service';
 
-export interface Preset {
-  name: string;
-  leftChannel: Oscillator[];
-  rightChannel: Oscillator[];
-  masterVolume: number;
+export interface OscillatorData {
+  type: Waveform;
+  frequency: number;
+}
+
+export class Preset {
+  constructor(public name: string) {}
+
+  leftChannel: OscillatorData[] = [];
+  rightChannel: OscillatorData[] = [];
+  isSelected?: boolean;
+  //   masterVolume: number;
+  addOscillator(channel: Channel, oscillatorData: OscillatorData) {
+    channel === 'left'
+      ? this.leftChannel.push(oscillatorData)
+      : this.rightChannel.push(oscillatorData);
+  }
 }
 
 // move to the oscillators

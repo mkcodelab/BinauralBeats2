@@ -1,1 +1,18 @@
-<p>choose your favourite preset!</p>
+<div class="flex flex-col justify-center">
+    <p class="text-center font-cinzel text-2xl text-white">choose your favourite preset!</p>
+
+    <div class="p-4 flex flex-col">
+        <button class="p-2 bg-slate-500 rounded-xl text-white mb-1"
+                [ngClass]="{'bg-red-500' : preset.isSelected}"
+                *ngFor="let preset of presets"
+                (click)="selectPreset(preset)">{{ preset.name }}</button>
+
+    </div>
+
+</div>
+<!-- buttons -->
+
+<div class="fixed bottom-0 left-0 flex justify-center w-full p-4">
+    <button class="play p-4 bg-slate-500 rounded-full w-20 h-20 text-white font-cinzel"
+            (click)="togglePreset()">{{isPlaying ? 'pause' : 'play'}}</button>
+</div>
