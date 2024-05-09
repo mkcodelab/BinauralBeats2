@@ -12,9 +12,11 @@
         <!-- add icon -->
 
         <input class="slider"
+               [value]="getVolume()"
+               (input)="changeVolume(volume.value)"
                type="range"
                name="volume"
-               id="volume"
+               #volume
                step="0.01"
                min="0"
                max="1">
@@ -34,7 +36,7 @@
                #leftChannel
                step="1"
                min="20"
-               max="300">
+               max="400">
     </div>
 
     <!-- right channel slider -->
@@ -50,7 +52,7 @@
                #rightChannel
                step="1"
                min="20"
-               max="300">
+               max="400">
     </div>
 
 </div>

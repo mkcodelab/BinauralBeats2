@@ -22,35 +22,31 @@ export class SynthService {
   //   webkitAudioContext: typeof AudioContext
   // }
   //   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  audioCtx = new window.AudioContext();
+  private audioCtx = new window.AudioContext();
 
-  oscR = this.audioCtx.createOscillator();
-  oscL = this.audioCtx.createOscillator();
+  private oscR = this.audioCtx.createOscillator();
+  private oscL = this.audioCtx.createOscillator();
 
   oscillators: OscillatorNode[] = [];
 
   //   master gain node
-  masterGain = this.audioCtx.createGain();
-  masterVolume = 0.4;
+  private masterVolume = 0.4;
+  private masterGain = this.audioCtx.createGain();
 
   //   merger
-  merger = this.audioCtx.createChannelMerger(2);
+  private merger = this.audioCtx.createChannelMerger(2);
 
-  waveform: Waveform = 'sine';
+  private waveform: Waveform = 'sine';
 
-  fade = true;
+  private isFadeOn = true;
 
-  isPlaying = false;
-  firstStart = false;
+  public isPlaying = false;
+  private firstStart = false;
 
   constructor() {
     this.masterGain.gain.value = this.masterVolume;
     this.merger.connect(this.masterGain);
     this.masterGain.connect(this.audioCtx.destination);
-  }
-
-  changeMasterVolume(value: number) {
-    this.masterGain.gain.value = value;
   }
 
   start() {
@@ -72,28 +68,20 @@ export class SynthService {
     }
 
     // fade in
-    if (this.fade)
-      this.masterGain.gain.setValueAtTime(
-        this.masterGain.gain.value,
-        this.audioCtx.currentTime
-      );
-    this.masterGain.gain.exponentialRampToValueAtTime(
-      this.masterVolume,
-      this.audioCtx.currentTime + 1
-    );
+    if (this.isFadeOn) {
+      this.preventClickSound();
+      this.fade('in', 1);
+    } else {
+      this.masterGain.gain.value = this.masterVolume;
+    }
+
     this.isPlaying = true;
   }
 
   stop() {
-    if (this.fade) {
-      this.masterGain.gain.setValueAtTime(
-        this.masterGain.gain.value,
-        this.audioCtx.currentTime
-      );
-      this.masterGain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        this.audioCtx.currentTime + 1
-      );
+    if (this.isFadeOn) {
+      this.preventClickSound();
+      this.fade('out', 1);
 
       //  disconnect has to be delayed, because of the fade function
       let that = this;
@@ -124,5 +112,45 @@ export class SynthService {
 
   getChannelFrequencyValue(channel: Channel): number {
     return channel === 'left' ? this.freqLeft : this.freqRight;
+  }
+  get volume() {
+    return this.masterVolume;
+  }
+
+  changeMasterGain(value: number) {
+    // this.masterGain.gain.value = value;
+    this.masterGain.gain.setTargetAtTime(
+      value,
+      this.audioCtx.currentTime,
+      0.05
+    );
+  }
+
+  changeMasterVolume(value: number) {
+    this.masterVolume = value;
+    this.changeMasterGain(value);
+  }
+
+  preventClickSound() {
+    // this prevents clicking sound related to stopping oscillator at non-zero crossing point.
+
+    this.masterGain.gain.setTargetAtTime(
+      this.masterGain.gain.value,
+      this.audioCtx.currentTime,
+      0.05
+    );
+  }
+
+  fade(direction: 'in' | 'out', time: number) {
+    const gain = this.masterGain.gain;
+    direction === 'in'
+      ? gain.exponentialRampToValueAtTime(
+          this.masterVolume,
+          this.audioCtx.currentTime + time
+        )
+      : gain.exponentialRampToValueAtTime(
+          0.0001,
+          this.audioCtx.currentTime + time
+        );
   }
 }

@@ -24,4 +24,12 @@ export class BinauralBeatsComponent {
   getChannelValue(channel: Channel) {
     return this.synthSvc.getChannelFrequencyValue(channel);
   }
+
+  changeVolume(value: string) {
+    this.synthSvc.changeMasterVolume(+value);
+  }
+
+  getVolume() {
+    return this.synthSvc.volume;
+  }
 }
