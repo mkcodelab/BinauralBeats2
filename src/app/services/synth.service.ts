@@ -13,8 +13,8 @@ export type Channel = 'left' | 'right';
   providedIn: 'root',
 })
 export class SynthService {
-  freqLeft: number = 0;
-  freqRight: number = 0;
+  freqLeft: number = 200;
+  freqRight: number = 206;
 
   //   add declarations.d.ts
   // then
@@ -24,10 +24,8 @@ export class SynthService {
   //   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   audioCtx = new window.AudioContext();
 
-  //   oscR = this.audioCtx.createOscillator();
-  //   oscL = this.audioCtx.createOscillator();
-  oscR!: OscillatorNode;
-  oscL!: OscillatorNode;
+  oscR = this.audioCtx.createOscillator();
+  oscL = this.audioCtx.createOscillator();
 
   oscillators: OscillatorNode[] = [];
 
@@ -43,6 +41,7 @@ export class SynthService {
   fade = true;
 
   isPlaying = false;
+  firstStart = false;
 
   constructor() {
     this.masterGain.gain.value = this.masterVolume;
@@ -57,29 +56,31 @@ export class SynthService {
   start() {
     // add oscillators to the oscillators array later...
 
-    let osc2 = this.audioCtx.createOscillator();
-    osc2.type = this.waveform;
-    osc2.frequency.value = this.freqLeft;
-    //connecting to the left channel
-    osc2.connect(this.merger, 0, 1);
+    this.oscL.type = this.waveform;
+    this.oscL.frequency.value = this.freqLeft;
+    this.oscL.connect(this.merger, 0, 1);
 
-    let osc1 = this.audioCtx.createOscillator();
-    osc1.type = this.waveform;
-    osc1.frequency.value = this.freqRight;
-    //connecting to the right channel
-    osc1.connect(this.merger, 0, 0);
+    this.oscR.type = this.waveform;
+    this.oscR.frequency.value = this.freqRight;
+    this.oscR.connect(this.merger, 0, 0);
 
-    this.oscR = osc1;
-    this.oscL = osc2;
+    // start oscillators on first start to prevent "user gesture warn" and other issues
+    if (!this.firstStart) {
+      this.oscL.start();
+      this.oscR.start();
+      this.firstStart = true;
+    }
 
-    osc1.start();
-    osc2.start();
-
+    // fade in
     if (this.fade)
-      this.masterGain.gain.exponentialRampToValueAtTime(
-        this.masterVolume,
-        this.audioCtx.currentTime + 1.2
+      this.masterGain.gain.setValueAtTime(
+        this.masterGain.gain.value,
+        this.audioCtx.currentTime
       );
+    this.masterGain.gain.exponentialRampToValueAtTime(
+      this.masterVolume,
+      this.audioCtx.currentTime + 1
+    );
     this.isPlaying = true;
   }
 
@@ -91,30 +92,37 @@ export class SynthService {
       );
       this.masterGain.gain.exponentialRampToValueAtTime(
         0.0001,
-        this.audioCtx.currentTime + 1.2
+        this.audioCtx.currentTime + 1
       );
 
+      //  disconnect has to be delayed, because of the fade function
       let that = this;
       setTimeout(function () {
-        that.oscR.stop();
-        that.oscL.stop();
-      }, 500);
+        that.oscR.disconnect();
+        that.oscL.disconnect();
+      }, 1000);
     } else {
-      this.oscR.stop();
-      this.oscL.stop();
+      this.oscR.disconnect();
+      this.oscL.disconnect();
     }
 
     this.isPlaying = false;
   }
 
-  changeFreq(channel: Channel, value: number) {
+  changeFrequency(channel: Channel, value: number) {
     switch (channel) {
       case 'left':
-        this.oscL.frequency.value = value;
+        this.freqLeft = value;
+        this.oscL.frequency.value = this.freqLeft;
         break;
       case 'right':
-        this.oscR.frequency.value = value;
+        this.freqRight = value;
+        this.oscR.frequency.value = this.freqRight;
         break;
     }
+  }
+
+  getChannelFrequencyValue(channel: Channel): number {
+    return channel === 'left' ? this.freqLeft : this.freqRight;
   }
 }
