@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Preset } from './preset-creator.service';
+import { BehaviorSubject } from 'rxjs';
 
 export type Waveform = 'sine' | 'triangle' | 'sawtooth' | 'square';
 
@@ -46,7 +47,15 @@ export class SynthService {
 
   private isFadeOn = true;
 
-  public isPlaying = false;
+  public isBinauralPlaying = false;
+
+  private presetPlaying$ = new BehaviorSubject(false);
+
+  //   public presetPlaying$ = this.isPresetPlaying$.asObservable();
+  isPresetPlaying() {
+    return this.presetPlaying$.asObservable();
+  }
+
   private firstStart = false;
 
   constructor() {
@@ -83,12 +92,12 @@ export class SynthService {
     // fade in
     if (this.isFadeOn) {
       this.preventClickSound(this.binauralGain);
-      this.fade('in', 1, this.binauralGain, this.binauralVolume);
+      this.fade('in', 0.5, this.binauralGain, this.binauralVolume);
     } else {
       this.masterGain.gain.value = this.masterVolume;
     }
 
-    this.isPlaying = true;
+    this.isBinauralPlaying = true;
   }
 
   playPreset() {
@@ -99,6 +108,8 @@ export class SynthService {
       for (let oscillator of this.rightChannelOscillators) {
         oscillator.connect(this.merger, 0, 0);
       }
+
+      this.presetPlaying$.next(true);
     } else {
       console.warn('preset not selected');
     }
@@ -111,12 +122,13 @@ export class SynthService {
     for (let oscillator of this.leftChannelOscillators) {
       oscillator.disconnect();
     }
+    this.presetPlaying$.next(false);
   }
 
   stop() {
     if (this.isFadeOn) {
       this.preventClickSound(this.binauralGain);
-      this.fade('out', 1, this.binauralGain, this.binauralVolume);
+      this.fade('out', 0.5, this.binauralGain, this.binauralVolume);
 
       //  disconnect has to be delayed, because of the fade function
       let that = this;
@@ -129,7 +141,7 @@ export class SynthService {
       this.oscL.disconnect();
     }
 
-    this.isPlaying = false;
+    this.isBinauralPlaying = false;
   }
 
   changeFrequency(channel: Channel, value: number) {
@@ -202,6 +214,7 @@ export class SynthService {
   }
 
   selectPreset(preset: Preset) {
+    this.stopPreset();
     this.currentPreset = preset;
     this.isPresetSelected = true;
     this.clearPresetOscillators();

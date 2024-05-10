@@ -27,6 +27,12 @@ export class Preset {
   providedIn: 'root',
 })
 export class PresetCreatorService {
+  constructor() {
+    // load presets
+    // this.localStorageSvc.getItem('presets')
+
+    this.addSamplePresets();
+  }
   private lsSvc = inject(LocalStorageService);
 
   private presets: Preset[] = [];
@@ -44,5 +50,22 @@ export class PresetCreatorService {
 
   savePresets() {
     this.lsSvc.setItem('presets', JSON.stringify(this.presets));
+  }
+
+  addSamplePresets() {
+    let preset = new Preset('sample');
+    preset.addOscillator('left', { type: 'sawtooth', frequency: 200 });
+    preset.addOscillator('right', { type: 'sine', frequency: 280 });
+    this.presets.push(preset);
+
+    let preset2 = new Preset('sample2');
+    preset2.addOscillator('left', { type: 'square', frequency: 150 });
+    preset2.addOscillator('right', { type: 'square', frequency: 120 });
+
+    this.presets.push(preset2);
+  }
+
+  getLoadedPresets() {
+    return [...this.presets];
   }
 }

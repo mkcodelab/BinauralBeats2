@@ -2,8 +2,8 @@
     <p class="text-center font-cinzel text-2xl text-white">choose your favourite preset!</p>
 
     <div class="p-4 flex flex-col">
-        <button class="p-2 bg-slate-500 rounded-xl text-white mb-1"
-                [ngClass]="{'bg-red-500' : preset.isSelected}"
+        <button class="p-2 rounded-xl text-white mb-1"
+                [ngClass]="preset.isSelected? 'bg-red-500' : 'bg-slate-500'"
                 *ngFor="let preset of presets"
                 (click)="selectPreset(preset)">{{ preset.name }}</button>
 

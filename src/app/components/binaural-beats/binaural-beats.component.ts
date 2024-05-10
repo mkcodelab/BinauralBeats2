@@ -14,7 +14,7 @@ export class BinauralBeatsComponent {
   }
 
   get isPlaying() {
-    return this.synthSvc.isPlaying;
+    return this.synthSvc.isBinauralPlaying;
   }
 
   changeFrequency(channel: Channel, value: string) {
