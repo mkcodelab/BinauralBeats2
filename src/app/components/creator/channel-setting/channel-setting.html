@@ -1,0 +1,22 @@
+<div class="bg-slate-200 mr-2 p-2 flex flex-col">
+    <p>{{channel}} channel</p>
+
+
+    <div class="mb-1 flex flex-col">
+        <input class="mb-1"
+               type="number"
+               placeholder="frequency"
+               min="20"
+               max="400"
+               #frequency>
+        <select name="waveType"
+                #waveForm>
+            <option *ngFor="let waveForm of waveFormOptions"
+                    [value]="waveForm">{{waveForm}}</option>
+        </select>
+    </div>
+
+    <button class="p-1 text-white bg-slate-500"
+            title="add oscillator"
+            (click)="sendOscillatorData(waveForm.value, +frequency.value)">+</button>
+</div>

@@ -5,19 +5,24 @@
         <p>Create new sounds!</p>
     </div>
 
-    <div class="flex flex-col justify-center">
-        <div>
-            <p>left channel</p>
 
+
+    <div class="flex flex-col justify-center m-4">
+
+        <input class="mb-2 p-2 rounded-xl text-center"
+               type="text"
+               placeholder="preset title"
+               #presetTitleInput
+               required
+               (input)="presetTitle = presetTitleInput.value">
+
+        <div class="flex justify-center">
+            <channel-setting channel="left"
+                             (oscillatorData)="recieveOscillatorData($event)"></channel-setting>
+
+            <channel-setting channel="right"
+                             (oscillatorData)="recieveOscillatorData($event)"></channel-setting>
         </div>
-
-        <div>
-            <p>right channel</p>
-
-        </div>
-
-
-
 
     </div>
 
