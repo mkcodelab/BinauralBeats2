@@ -10,12 +10,13 @@ import {
   ChannelData,
   ChannelSettingComponent,
 } from './channel-setting/channel-setting.component';
+import { ChannelOscillatorComponent } from './channel-oscillator/channel-oscillator.component';
 
 @Component({
   standalone: true,
   selector: 'creator',
   templateUrl: './creator.html',
-  imports: [NgFor, ChannelSettingComponent],
+  imports: [NgFor, ChannelSettingComponent, ChannelOscillatorComponent],
 })
 export class CreatorComponent {
   private presetService = inject(PresetCreatorService);

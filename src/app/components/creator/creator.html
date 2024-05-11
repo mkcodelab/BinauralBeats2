@@ -1,8 +1,9 @@
 <div>
     <!-- welcome screen -->
     <div>
-        <h1>Welcome to creator where you can create new presets!</h1>
-        <p>Create new sounds!</p>
+        <h1 class="font-cinzel text-2xl text-white text-center mt-4">Create new
+            presets!
+        </h1>
     </div>
 
 
@@ -17,17 +18,35 @@
                (input)="presetTitle = presetTitleInput.value">
 
         <div class="flex justify-center">
-            <channel-setting channel="left"
+            <channel-setting class="w-6/12"
+                             channel="left"
                              (oscillatorData)="recieveOscillatorData($event)"></channel-setting>
 
-            <channel-setting channel="right"
+            <channel-setting class="w-6/12"
+                             channel="right"
                              (oscillatorData)="recieveOscillatorData($event)"></channel-setting>
         </div>
 
-    </div>
+        <!-- applied oscillators -->
+        <div class="flex justify-center mt-2 mb-8">
+            <!-- left channel oscillators -->
+            <div class="flex flex-col mr-1 w-6/12">
 
-    <button class="p-2 text-white bg-slate-500 absolute bottom-0 left-0 w-full"
-            (click)="addPreset()">
-        add +
-    </button>
-</div>
+                <channel-oscillator *ngFor="let oscillator of leftChannelOscillators"
+                                    [oscillator]="oscillator"></channel-oscillator>
+            </div>
+
+            <!-- right channel oscillators -->
+            <div class="flex flex-col ml-1 w-6/12">
+
+                <channel-oscillator *ngFor="let oscillator of rightChannelOscillators"
+                                    [oscillator]="oscillator"></channel-oscillator>
+            </div>
+
+        </div>
+
+        <button class="p-2 text-white bg-slate-500 fixed bottom-0 left-0 w-full"
+                (click)="addPreset()">
+            add +
+        </button>
+    </div>

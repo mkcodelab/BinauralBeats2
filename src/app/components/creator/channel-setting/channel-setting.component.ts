@@ -1,5 +1,12 @@
 import { NgFor } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { Waveform } from '../../../services/synth.service';
 import { OscillatorData } from '../../../services/preset-creator.service';
 
@@ -15,6 +22,9 @@ export interface ChannelData extends OscillatorData {
 })
 export class ChannelSettingComponent {
   waveFormOptions: Waveform[] = ['sine', 'sawtooth', 'triangle', 'square'];
+
+  cdr = inject(ChangeDetectorRef);
+
   @Input({ required: true }) channel: 'left' | 'right';
 
   @Output() oscillatorData = new EventEmitter<ChannelData>();

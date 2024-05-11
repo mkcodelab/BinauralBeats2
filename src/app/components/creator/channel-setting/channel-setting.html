@@ -1,14 +1,21 @@
-<div class="bg-slate-200 mr-2 p-2 flex flex-col">
+<div class="bg-slate-200 mr-1 ml-1 p-2 flex flex-col">
     <p>{{channel}} channel</p>
 
 
     <div class="mb-1 flex flex-col">
-        <input class="mb-1"
-               type="number"
-               placeholder="frequency"
+
+        <label for="frequency">frequency: {{frequency.value}}</label>
+
+
+        <!-- need to have onInput binding to mark it for changeDetection -->
+        <input class="mb-1 text-center"
+               type="range"
                min="20"
                max="400"
+               step="1"
+               (input)="0"
                #frequency>
+
         <select name="waveType"
                 #waveForm>
             <option *ngFor="let waveForm of waveFormOptions"
