@@ -16,7 +16,7 @@ export class ChannelOscillatorComponent {
     console.log(this.oscillator);
   }
 
-  onDeleteOscillator(id: number) {
-    this.deleteOscillator.emit(id);
+  onDeleteOscillator(oscillator: OscillatorData) {
+    this.deleteOscillator.emit(oscillator);
   }
 }

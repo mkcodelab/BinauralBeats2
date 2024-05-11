@@ -10,8 +10,9 @@ import {
 import { Waveform } from '../../../services/synth.service';
 import { OscillatorData } from '../../../services/preset-creator.service';
 
-export interface ChannelData extends OscillatorData {
+export interface OscillatorChannelData extends OscillatorData {
   channel: 'left' | 'right';
+  //   id: number;
 }
 
 @Component({
@@ -27,7 +28,7 @@ export class ChannelSettingComponent {
 
   @Input({ required: true }) channel: 'left' | 'right';
 
-  @Output() oscillatorData = new EventEmitter<ChannelData>();
+  @Output() oscillatorData = new EventEmitter<OscillatorChannelData>();
 
   sendOscillatorData(type: string, frequency: number) {
     let waveformType = type as Waveform;
@@ -36,6 +37,7 @@ export class ChannelSettingComponent {
       type: waveformType,
       frequency: frequency,
       channel: this.channel,
+      id: Date.now(),
     });
   }
 }

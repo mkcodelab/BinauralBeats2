@@ -33,14 +33,16 @@
             <div class="flex flex-col mr-1 w-6/12">
 
                 <channel-oscillator *ngFor="let oscillator of leftChannelOscillators"
-                                    [oscillator]="oscillator"></channel-oscillator>
+                                    [oscillator]="oscillator"
+                                    (deleteOscillator)="deleteOscillator($event)"></channel-oscillator>
             </div>
 
             <!-- right channel oscillators -->
             <div class="flex flex-col ml-1 w-6/12">
 
                 <channel-oscillator *ngFor="let oscillator of rightChannelOscillators"
-                                    [oscillator]="oscillator"></channel-oscillator>
+                                    [oscillator]="oscillator"
+                                    (deleteOscillator)="deleteOscillator($event)"></channel-oscillator>
             </div>
 
         </div>

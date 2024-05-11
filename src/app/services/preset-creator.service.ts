@@ -5,6 +5,7 @@ import { Channel, Waveform } from './synth.service';
 export interface OscillatorData {
   type: Waveform;
   frequency: number;
+  id: number;
 }
 
 export class Preset {
@@ -54,13 +55,13 @@ export class PresetCreatorService {
 
   addSamplePresets() {
     let preset = new Preset('sample');
-    preset.addOscillator('left', { type: 'sawtooth', frequency: 200 });
-    preset.addOscillator('right', { type: 'sine', frequency: 280 });
+    preset.addOscillator('left', { type: 'sawtooth', frequency: 200, id: 0 });
+    preset.addOscillator('right', { type: 'sine', frequency: 280, id: 0 });
     this.presets.push(preset);
 
     let preset2 = new Preset('sample2');
-    preset2.addOscillator('left', { type: 'square', frequency: 150 });
-    preset2.addOscillator('right', { type: 'square', frequency: 120 });
+    preset2.addOscillator('left', { type: 'square', frequency: 150, id: 1 });
+    preset2.addOscillator('right', { type: 'square', frequency: 120, id: 1 });
 
     this.presets.push(preset2);
   }

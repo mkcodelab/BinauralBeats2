@@ -4,10 +4,9 @@ import {
   Preset,
   PresetCreatorService,
 } from '../../services/preset-creator.service';
-import { Waveform } from '../../services/synth.service';
 import { NgFor } from '@angular/common';
 import {
-  ChannelData,
+  OscillatorChannelData,
   ChannelSettingComponent,
 } from './channel-setting/channel-setting.component';
 import { ChannelOscillatorComponent } from './channel-oscillator/channel-oscillator.component';
@@ -25,8 +24,6 @@ export class CreatorComponent {
   rightChannelOscillators: OscillatorData[] = [];
 
   presetTitle: string;
-
-  //   waveFormOptions: Waveform[] = ['sine', 'sawtooth', 'triangle', 'square'];
 
   addPreset() {
     const preset = this.createPreset();
@@ -49,17 +46,36 @@ export class CreatorComponent {
     return preset;
   }
 
-  recieveOscillatorData(data: ChannelData) {
-    console.log(data);
-    this.addOscillatorData(data.channel, {
-      type: data.type,
-      frequency: data.frequency,
-    });
+  recieveOscillatorData(data: OscillatorChannelData) {
+    // this.addOscillatorData(data.channel, {
+    //   type: data.type,
+    //   frequency: data.frequency,
+    //   id: data.id,
+    // });
+    this.addOscillatorData(data);
   }
 
-  addOscillatorData(channel: 'left' | 'right', data: OscillatorData) {
-    channel === 'left'
+  //   addOscillatorData(channel: 'left' | 'right', data: OscillatorData) {
+  //     channel === 'left'
+  //       ? this.leftChannelOscillators.push(data)
+  //       : this.rightChannelOscillators.push(data);
+  //   }
+  addOscillatorData(data: OscillatorChannelData) {
+    data.channel === 'left'
       ? this.leftChannelOscillators.push(data)
       : this.rightChannelOscillators.push(data);
+  }
+
+  deleteOscillator(oscillator: OscillatorChannelData) {
+    console.log('deleting ', oscillator);
+    if (oscillator.channel === 'left') {
+      this.leftChannelOscillators = this.leftChannelOscillators.filter(
+        (osc) => osc.id !== oscillator.id
+      );
+    } else {
+      this.rightChannelOscillators = this.rightChannelOscillators.filter(
+        (osc) => osc.id !== oscillator.id
+      );
+    }
   }
 }
