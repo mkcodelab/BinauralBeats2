@@ -34,11 +34,17 @@ export class SynthService {
   private masterVolume = 0.4;
   private masterGain = this.audioCtx.createGain();
 
+  //   binaural gain node
   private binauralVolume = 0.4;
   private binauralGain = this.audioCtx.createGain();
 
+  //   preset gain node
+
+  private presetVolume = 0.5;
+  private presetGain = this.audioCtx.createGain();
+
   //   merger for presets
-  private merger = this.audioCtx.createChannelMerger(2);
+  private presetMerger = this.audioCtx.createChannelMerger(2);
 
   //   merger for binaural
   private binauralMerger = this.audioCtx.createChannelMerger(2);
@@ -51,7 +57,6 @@ export class SynthService {
 
   private presetPlaying$ = new BehaviorSubject(false);
 
-  //   public presetPlaying$ = this.isPresetPlaying$.asObservable();
   isPresetPlaying() {
     return this.presetPlaying$.asObservable();
   }
@@ -61,19 +66,20 @@ export class SynthService {
   constructor() {
     this.masterGain.gain.value = this.masterVolume;
     this.binauralGain.gain.value = this.binauralVolume;
+    this.presetGain.gain.value = this.presetVolume;
 
     this.binauralMerger.connect(this.binauralGain);
 
     this.binauralGain.connect(this.masterGain);
-    // add gain node for presets
-    this.merger.connect(this.masterGain);
+
+    this.presetMerger.connect(this.presetGain);
+
+    this.presetGain.connect(this.masterGain);
 
     this.masterGain.connect(this.audioCtx.destination);
   }
 
   start() {
-    // add oscillators to the oscillators array later...
-
     this.oscL.type = this.waveform;
     this.oscL.frequency.value = this.freqLeft;
     this.oscL.connect(this.binauralMerger, 0, 1);
@@ -102,11 +108,14 @@ export class SynthService {
 
   playPreset() {
     if (this.isPresetSelected) {
+      this.preventClickSound(this.presetGain);
+      this.fade('in', 0.5, this.presetGain, this.presetVolume);
+
       for (let oscillator of this.leftChannelOscillators) {
-        oscillator.connect(this.merger, 0, 1);
+        oscillator.connect(this.presetMerger, 0, 1);
       }
       for (let oscillator of this.rightChannelOscillators) {
-        oscillator.connect(this.merger, 0, 0);
+        oscillator.connect(this.presetMerger, 0, 0);
       }
 
       this.presetPlaying$.next(true);
@@ -116,12 +125,18 @@ export class SynthService {
   }
 
   stopPreset() {
-    for (let oscillator of this.rightChannelOscillators) {
-      oscillator.disconnect();
-    }
-    for (let oscillator of this.leftChannelOscillators) {
-      oscillator.disconnect();
-    }
+    this.preventClickSound(this.presetGain);
+    this.fade('out', 0.5, this.presetGain, this.presetVolume);
+
+    setTimeout(() => {
+      for (let oscillator of this.rightChannelOscillators) {
+        oscillator.disconnect();
+      }
+      for (let oscillator of this.leftChannelOscillators) {
+        oscillator.disconnect();
+      }
+    }, 500);
+
     this.presetPlaying$.next(false);
   }
 
@@ -181,11 +196,6 @@ export class SynthService {
   preventClickSound(gainNode: GainNode) {
     // this prevents clicking sound related to stopping oscillator at non-zero crossing point.
 
-    // this.masterGain.gain.setTargetAtTime(
-    //   this.masterGain.gain.value,
-    //   this.audioCtx.currentTime,
-    //   0.05
-    // );
     gainNode.gain.setTargetAtTime(
       gainNode.gain.value,
       this.audioCtx.currentTime,
@@ -244,7 +254,6 @@ export class SynthService {
   }
 
   clearPresetOscillators() {
-    // this.oscillators = [];
     this.leftChannelOscillators.length = 0;
     this.rightChannelOscillators.length = 0;
   }
