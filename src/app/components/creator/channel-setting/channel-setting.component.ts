@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef,
   inject,
 } from '@angular/core';
-import { Waveform } from '../../../services/synth.service';
+import { Waveform } from '../../../services/preset-creator.service';
 import { OscillatorData } from '../../../services/preset-creator.service';
 
 export interface OscillatorChannelData extends OscillatorData {

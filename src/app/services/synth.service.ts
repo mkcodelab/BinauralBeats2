@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Preset } from './preset-creator.service';
 import { BehaviorSubject } from 'rxjs';
-
-export type Waveform = 'sine' | 'triangle' | 'sawtooth' | 'square';
-
-export type Channel = 'left' | 'right';
+import { Channel, Waveform } from './preset-creator.service';
 
 @Injectable({
   providedIn: 'root',

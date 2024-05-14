@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Channel, SynthService } from '../../services/synth.service';
+import { SynthService } from '../../services/synth.service';
+import { Channel } from '../../services/preset-creator.service';
 
 @Component({
   standalone: true,

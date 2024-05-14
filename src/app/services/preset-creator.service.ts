@@ -1,6 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
-import { Channel, Waveform } from './synth.service';
+
+export type Waveform = 'sine' | 'triangle' | 'sawtooth' | 'square';
+
+export type Channel = 'left' | 'right';
 
 export interface OscillatorData {
   type: Waveform;
@@ -30,10 +33,12 @@ export class Preset {
 export class PresetCreatorService {
   constructor() {
     // load presets
-    // this.localStorageSvc.getItem('presets')
-
+    //  this.getPresets()
     this.addSamplePresets();
   }
+
+  private presetsLoaded = false;
+
   private lsSvc = inject(LocalStorageService);
 
   private presets: Preset[] = [];
@@ -46,6 +51,7 @@ export class PresetCreatorService {
     const presets = this.lsSvc.getItem('presets');
     if (presets !== null) {
       this.presets = JSON.parse(presets);
+      this.presetsLoaded = true;
     }
   }
 
@@ -59,14 +65,12 @@ export class PresetCreatorService {
     preset.addOscillator('right', { type: 'sine', frequency: 280, id: 0 });
     this.presets.push(preset);
 
-    let preset2 = new Preset('sample2');
-    preset2.addOscillator('left', { type: 'square', frequency: 150, id: 1 });
-    preset2.addOscillator('right', { type: 'square', frequency: 120, id: 1 });
-
-    this.presets.push(preset2);
+    this.presetsLoaded = true;
   }
 
   getLoadedPresets() {
-    return [...this.presets];
+    if (this.presetsLoaded) {
+      return [...this.presets];
+    } else return [];
   }
 }
