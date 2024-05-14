@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Preset } from './preset-creator.service';
+import { OscillatorData, Preset } from './preset-creator.service';
 import { BehaviorSubject } from 'rxjs';
 import { Channel, Waveform } from './preset-creator.service';
 
@@ -10,7 +10,7 @@ export class SynthService {
   freqLeft: number = 200;
   freqRight: number = 206;
 
-  currentPreset: Preset;
+  currentPreset: Preset | null;
   isPresetSelected = false;
 
   //   add declarations.d.ts
@@ -106,7 +106,7 @@ export class SynthService {
   playPreset() {
     if (this.isPresetSelected) {
       this.preventClickSound(this.presetGain);
-      this.fade('in', 0.5, this.presetGain, this.presetVolume);
+      this.fade('in', 0.2, this.presetGain, this.presetVolume);
 
       for (let oscillator of this.leftChannelOscillators) {
         oscillator.connect(this.presetMerger, 0, 1);
@@ -123,7 +123,7 @@ export class SynthService {
 
   stopPreset() {
     this.preventClickSound(this.presetGain);
-    this.fade('out', 0.5, this.presetGain, this.presetVolume);
+    this.fade('out', 0.2, this.presetGain, this.presetVolume);
 
     setTimeout(() => {
       for (let oscillator of this.rightChannelOscillators) {
@@ -132,9 +132,8 @@ export class SynthService {
       for (let oscillator of this.leftChannelOscillators) {
         oscillator.disconnect();
       }
-    }, 500);
-
-    this.presetPlaying$.next(false);
+      this.presetPlaying$.next(false);
+    }, 200);
   }
 
   stop() {
@@ -143,6 +142,7 @@ export class SynthService {
       this.fade('out', 0.5, this.binauralGain, this.binauralVolume);
 
       //  disconnect has to be delayed, because of the fade function
+      //   change to arrow function
       let that = this;
       setTimeout(function () {
         that.oscR.disconnect();
@@ -206,11 +206,9 @@ export class SynthService {
     gainNode: GainNode,
     gainNodeValue: number
   ) {
-    // const gain = this.masterGain.gain;
     const gain = gainNode.gain;
     direction === 'in'
       ? gain.exponentialRampToValueAtTime(
-          //   this.masterVolume,
           gainNodeValue,
           this.audioCtx.currentTime + time
         )
@@ -222,36 +220,47 @@ export class SynthService {
 
   selectPreset(preset: Preset) {
     this.stopPreset();
-    this.currentPreset = preset;
-    this.isPresetSelected = true;
-    this.clearPresetOscillators();
-    this.createPresetOscillators();
+    // must be delayed, because stopPreset and disconnect take a 200ms
+    // otherwise it would not disconnect oscillators properly and they are "active"
+    // use rx for this?
+    setTimeout(() => {
+      this.clearPresetOscillators();
+      this.currentPreset = preset;
+      this.isPresetSelected = true;
+      this.createPresetOscillators();
+      //   this.logOscillators();
+    }, 500);
+    // console.log(this.audioCtx);
   }
 
   //   pushing preset oscillators to the channel arrays (L, R)
   createPresetOscillators() {
-    // left channel
-    for (let preset of this.currentPreset.leftChannel) {
-      const osc = this.audioCtx.createOscillator();
-      osc.frequency.value = preset.frequency;
-      osc.type = preset.type;
-      osc.start();
-
-      this.leftChannelOscillators.push(osc);
+    if (this.currentPreset !== null) {
+      // left channel
+      for (let preset of this.currentPreset.leftChannel) {
+        this.addOscillator(this.leftChannelOscillators, preset);
+      }
+      // right channel
+      for (let preset of this.currentPreset.rightChannel) {
+        this.addOscillator(this.rightChannelOscillators, preset);
+      }
     }
-    // right channel
-    for (let preset of this.currentPreset.rightChannel) {
-      const osc = this.audioCtx.createOscillator();
-      osc.frequency.value = preset.frequency;
-      osc.type = preset.type;
-      osc.start();
+  }
 
-      this.rightChannelOscillators.push(osc);
-    }
+  addOscillator(oscillatorsChannel: OscillatorNode[], preset: OscillatorData) {
+    const osc = this.audioCtx.createOscillator();
+    osc.frequency.value = preset.frequency;
+    osc.type = preset.type;
+    osc.start();
+    oscillatorsChannel.push(osc);
   }
 
   clearPresetOscillators() {
     this.leftChannelOscillators.length = 0;
     this.rightChannelOscillators.length = 0;
+  }
+
+  logOscillators() {
+    console.log(this.leftChannelOscillators, this.rightChannelOscillators);
   }
 }

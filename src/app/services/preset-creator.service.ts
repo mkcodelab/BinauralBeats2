@@ -60,10 +60,21 @@ export class PresetCreatorService {
   }
 
   addSamplePresets() {
+    // testing purposes only
     let preset = new Preset('sample');
     preset.addOscillator('left', { type: 'sawtooth', frequency: 200, id: 0 });
     preset.addOscillator('right', { type: 'sine', frequency: 280, id: 0 });
     this.presets.push(preset);
+
+    let preset2 = new Preset('sample2');
+    preset2.addOscillator('left', { type: 'sine', frequency: 300, id: 1 });
+    preset2.addOscillator('right', { type: 'sine', frequency: 300, id: 1 });
+    this.presets.push(preset2);
+
+    let preset3 = new Preset('sample3');
+    preset3.addOscillator('left', { type: 'square', frequency: 100, id: 1 });
+    preset3.addOscillator('right', { type: 'square', frequency: 100, id: 1 });
+    this.presets.push(preset3);
 
     this.presetsLoaded = true;
   }

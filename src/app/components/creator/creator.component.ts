@@ -11,6 +11,11 @@ import {
 } from './channel-setting/channel-setting.component';
 import { ChannelOscillatorComponent } from './channel-oscillator/channel-oscillator.component';
 
+enum Messages {
+  noNameWarn = 'Please add preset name',
+  presetAdded = 'Preset has been added!',
+}
+
 @Component({
   standalone: true,
   selector: 'creator',
@@ -25,14 +30,24 @@ export class CreatorComponent {
 
   presetTitle: string;
 
+  message: Messages | '';
+
   addPreset() {
-    const preset = this.createPreset();
-    this.presetService.addPreset(preset);
-    this.displayMessage();
+    if (!this.presetTitle) {
+      this.displayMessage(Messages.noNameWarn);
+    } else {
+      const preset = this.createPreset();
+      this.presetService.addPreset(preset);
+
+      this.clearOscillators();
+
+      this.displayMessage(Messages.presetAdded);
+    }
   }
 
-  displayMessage() {
-    alert('preset added!');
+  displayMessage(message: Messages) {
+    // alert('preset added!');
+    this.message = message;
   }
 
   createPreset(): Preset {
@@ -47,19 +62,9 @@ export class CreatorComponent {
   }
 
   recieveOscillatorData(data: OscillatorChannelData) {
-    // this.addOscillatorData(data.channel, {
-    //   type: data.type,
-    //   frequency: data.frequency,
-    //   id: data.id,
-    // });
     this.addOscillatorData(data);
   }
 
-  //   addOscillatorData(channel: 'left' | 'right', data: OscillatorData) {
-  //     channel === 'left'
-  //       ? this.leftChannelOscillators.push(data)
-  //       : this.rightChannelOscillators.push(data);
-  //   }
   addOscillatorData(data: OscillatorChannelData) {
     data.channel === 'left'
       ? this.leftChannelOscillators.push(data)
@@ -77,5 +82,10 @@ export class CreatorComponent {
         (osc) => osc.id !== oscillator.id
       );
     }
+  }
+
+  clearOscillators() {
+    this.rightChannelOscillators.length = 0;
+    this.leftChannelOscillators.length = 0;
   }
 }

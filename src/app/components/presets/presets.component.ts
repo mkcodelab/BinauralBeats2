@@ -37,6 +37,7 @@ export class PresetsComponent {
 
   selectPreset(preset: Preset) {
     // preset.isSelected = true;
+    console.log(preset);
     this.synthSvc.selectPreset(preset);
     // move to synthSvc
     // deselect all
