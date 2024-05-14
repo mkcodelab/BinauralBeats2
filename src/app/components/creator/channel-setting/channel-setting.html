@@ -17,7 +17,7 @@
                (input)="0"
                #frequency>
 
-        <select class="p-1 bg-slate-500 text-white"
+        <select class="p-1 bg-slate-400 text-white"
                 name="waveType"
                 #waveForm>
             <option *ngFor="let waveForm of waveFormOptions"
@@ -26,7 +26,7 @@
     </div>
 
     <div class="flex justify-center">
-        <button class="mt-2 p-1 text-white bg-slate-500 rounded-md w-full lg:w-3/12"
+        <button class="mt-2 p-1 text-white bg-slate-400 rounded-md w-full lg:w-3/12"
                 title="add oscillator"
                 (click)="sendOscillatorData(waveForm.value, +frequency.value)">+</button>
     </div>
