@@ -12,7 +12,7 @@ export interface NavItem {
   imports: [RouterLink, NgFor, NgClass],
   selector: 'navbar',
   template: `
-    <div class="p-2 bg-slate-200 flex justify-center">
+    <div class="p-2 bg-slate-200/20 flex justify-center">
       <button
         class="p-2 bg-slate-500 text-white rounded-xl"
         [ngClass]="{ 'mr-2': !isLast }"

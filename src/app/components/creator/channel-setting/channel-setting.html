@@ -1,14 +1,15 @@
-<div class="bg-slate-200 mr-1 ml-1 p-2 flex flex-col">
-    <p>{{channel}} channel</p>
+<div class="bg-slate-200 mr-1 ml-1 p-2 flex flex-col rounded-xl">
+    <p class="text-center font-cinzel">{{channel}} channel</p>
 
 
     <div class="mb-1 flex flex-col">
 
-        <label for="frequency">frequency: {{frequency.value}}</label>
+        <label class="font-cinzel text-center"
+               for="frequency">frequency: {{frequency.value}}</label>
 
 
         <!-- need to have onInput binding to mark it for changeDetection -->
-        <input class="mb-1 text-center"
+        <input class="mb-2 mt-2 text-center slider"
                type="range"
                min="20"
                max="400"
@@ -16,14 +17,17 @@
                (input)="0"
                #frequency>
 
-        <select name="waveType"
+        <select class="p-1 bg-slate-500 text-white"
+                name="waveType"
                 #waveForm>
             <option *ngFor="let waveForm of waveFormOptions"
                     [value]="waveForm">{{waveForm}}</option>
         </select>
     </div>
 
-    <button class="p-1 text-white bg-slate-500"
-            title="add oscillator"
-            (click)="sendOscillatorData(waveForm.value, +frequency.value)">+</button>
+    <div class="flex justify-center">
+        <button class="mt-2 p-1 text-white bg-slate-500 rounded-md w-full lg:w-3/12"
+                title="add oscillator"
+                (click)="sendOscillatorData(waveForm.value, +frequency.value)">+</button>
+    </div>
 </div>

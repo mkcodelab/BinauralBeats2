@@ -1,66 +1,86 @@
-<h1 class="text-2xl text-white w-full text-center font-cinzel pt-4">
-    -binaural beats-
-</h1>
+<div class="flex flex-col justify-center">
 
-<p class="text-white text-center pt-4 font-cinzel">you can achieve best results by setting 1 - 10 hz difference between
-    channels.
-</p>
+    <h1 class="text-2xl lg:text-7xl font-semibold text-white text-center font-cinzel pt-4">
+        -binaural beats-
+    </h1>
 
-<!-- main screen -->
-<div class="p-4">
+    <p class="text-white text-center pt-4 font-semibold font-cinzel">you can achieve best results by setting 1 - 10 hz
+        difference
+        between
+        channels.
+    </p>
 
-    <!-- volume box -->
-    <div class="flex flex-col">
-        <label for="volume"
-               class="font-cinzel text-white text-center">Volume</label>
-        <!-- add icon -->
 
-        <input class="slider"
-               [value]="getVolume()"
-               (input)="changeVolume(volume.value)"
-               type="range"
-               name="volume"
-               #volume
-               step="0.01"
-               min="0"
-               max="1">
+    <div class="w-full flex justify-center">
+        <!-- main screen -->
+        <div class="p-4 w-full lg:w-6/12">
+
+            <!-- volume box -->
+            <div class="flex flex-col">
+                <label for="volume"
+                       class="font-cinzel text-white text-center mb-2 select-none">Volume</label>
+                <!-- add icon -->
+
+                <div class="flex justify-center mb-4">
+                    <img class="w-10 h-10"
+                         [src]="volumeIconSrc"
+                         alt="volume">
+                </div>
+
+                <input class="slider"
+                       [value]="getVolume()"
+                       (input)="changeVolume(volume.value)"
+                       type="range"
+                       name="volume"
+                       #volume
+                       step="0.01"
+                       min="0"
+                       max="1">
+
+            </div>
+
+            <!-- left channel slider -->
+            <div class="flex flex-col mt-8">
+                <label for="leftChannel"
+                       class="font-cinzel text-white text-center mb-2 select-none">Left Channel:
+                    {{getChannelValue('left')}}
+                    Hz</label>
+
+                <input class="slider"
+                       [value]="getChannelValue('left')"
+                       (input)="changeFrequency('left', leftChannel.value)"
+                       type="range"
+                       name="leftChannel"
+                       #leftChannel
+                       step="1"
+                       min="20"
+                       max="300">
+            </div>
+
+            <!-- right channel slider -->
+            <div class="flex flex-col mt-8">
+                <label for="rightChannel"
+                       class="font-cinzel text-white text-center mb-2 select-none">Right Channel:
+                    {{getChannelValue('right')}}
+                    Hz</label>
+
+                <input class="slider"
+                       [value]="getChannelValue('right')"
+                       (input)="changeFrequency('right', rightChannel.value)"
+                       type="range"
+                       name="rightChannel"
+                       #rightChannel
+                       step="1"
+                       min="20"
+                       max="300">
+            </div>
+
+        </div>
 
     </div>
 
-    <!-- left channel slider -->
-    <div class="flex flex-col mt-8">
-        <label for="leftChannel"
-               class="font-cinzel text-white text-center">Left Channel: {{getChannelValue('left')}} Hz</label>
-
-        <input class="slider"
-               [value]="getChannelValue('left')"
-               (input)="changeFrequency('left', leftChannel.value)"
-               type="range"
-               name="leftChannel"
-               #leftChannel
-               step="1"
-               min="20"
-               max="300">
-    </div>
-
-    <!-- right channel slider -->
-    <div class="flex flex-col mt-8">
-        <label for="rightChannel"
-               class="font-cinzel text-white text-center">Right Channel: {{getChannelValue('right')}} Hz</label>
-
-        <input class="slider"
-               [value]="getChannelValue('right')"
-               (input)="changeFrequency('right', rightChannel.value)"
-               type="range"
-               name="rightChannel"
-               #rightChannel
-               step="1"
-               min="20"
-               max="300">
-    </div>
 
 </div>
-
 <!-- buttons -->
 
 <div class="fixed bottom-0 left-0 flex justify-center w-full p-4">

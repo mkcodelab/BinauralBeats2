@@ -33,4 +33,15 @@ export class BinauralBeatsComponent {
   getVolume() {
     return this.synthSvc.volume;
   }
+
+  get volumeIconSrc(): string {
+    const vol = this.getVolume();
+    if (vol === 0) {
+      return './assets/volume-x.svg';
+    } else if (vol < 0.7) {
+      return './assets/volume-1.svg';
+    } else {
+      return './assets/volume-2.svg';
+    }
+  }
 }

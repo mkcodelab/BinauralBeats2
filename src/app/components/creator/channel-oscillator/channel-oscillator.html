@@ -1,8 +1,9 @@
-<div class="bg-slate-200 mb-1 p-1 flex justify-between">
+<div class="bg-slate-200 mb-1 p-2 flex justify-between rounded-lg">
     <div>
         <span>{{oscillator.frequency}}</span>&nbsp;
         <span>{{oscillator.type}}</span>
     </div>
 
-    <button (click)="onDeleteOscillator(oscillator)">&#10006;</button>
+    <button (click)="onDeleteOscillator(oscillator)"
+            title="delete oscillator">&#10006;</button>
 </div>
